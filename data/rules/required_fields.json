@@ -1,0 +1,10 @@
+{
+  "required_fields": [
+    "company_name",
+    "industry",
+    "region",
+    "risk_materials",
+    "emergency_contacts",
+    "emergency_resources"
+  ]
+}
