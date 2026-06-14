@@ -1,0 +1,11 @@
+{
+  "name": "ai-environmental-emergency-plan-mvp",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:worker": "cd apps/worker && python -m uvicorn app.main:app --reload --port 8001",
+    "test:web": "pnpm --filter web test",
+    "test:e2e": "pnpm --filter web test:e2e"
+  }
+}
