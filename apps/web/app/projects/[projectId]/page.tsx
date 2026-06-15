@@ -1,19 +1,10 @@
-import { FileUploadPanel } from "../../../components/file-upload-panel";
-import { ExportPanel } from "../../../components/export-panel";
-import { GenerationStatus } from "../../../components/generation-status";
-import { QuestionnairePanel } from "../../../components/questionnaire-panel";
+import { ProjectGenerationWorkflow } from "../../../components/project-generation-workflow";
 
-export default function ProjectDetailPage() {
-  return (
-    <main>
-      <FileUploadPanel />
-      <QuestionnairePanel
-        questions={{
-          risk_materials: "请补充风险物质名称、最大储量、存放位置和危险特性。"
-        }}
-      />
-      <GenerationStatus issues={["missing_section:环境风险分析"]} />
-      <ExportPanel coverTitle="突发环境事件应急预案" body={"总则\n总则内容"} />
-    </main>
-  );
+export default async function ProjectDetailPage({
+  params
+}: {
+  params: Promise<{ projectId: string }>;
+}) {
+  const { projectId } = await params;
+  return <ProjectGenerationWorkflow projectId={projectId} />;
 }
