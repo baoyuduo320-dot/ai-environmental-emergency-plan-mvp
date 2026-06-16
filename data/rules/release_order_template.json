@@ -1,0 +1,21 @@
+{
+  "title": "发布令",
+  "template": [
+    "{org_label}各部门：",
+    "本{org_unit}依据《企业事业单位突发环境事件应急预案备案管理办法（试行）》等要求，结合国家环境保护的法律法规、规章标准和{company_name}的实际情况，组织编写了《{plan_name}》。",
+    "本预案阐述了{company_name}突发环境事件的应急救援工作原则、应急救援工作程序、应急救援工作处置措施，是指导{company_name}突发环境事件应急管理工作的纲领性文件和行动准则。现予以发布，希望全体员工遵照执行。",
+    "我批准，《{plan_name}》自{plan_issue_date}生效实施。",
+    "{company_name}",
+    "签署人：{legal_representative}"
+  ],
+  "organization_labels": {
+    "default": "公司",
+    "hospital": "医院",
+    "mine": "矿区"
+  },
+  "organization_units": {
+    "default": "公司",
+    "hospital": "院",
+    "mine": "矿"
+  }
+}

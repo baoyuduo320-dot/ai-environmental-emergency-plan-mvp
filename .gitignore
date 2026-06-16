@@ -11,3 +11,4 @@ artifacts
 playwright-report
 test-results
 *.swp
+deploy-upload/

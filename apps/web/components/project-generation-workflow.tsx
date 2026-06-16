@@ -2,15 +2,104 @@
 
 import { useState } from "react";
 
-import { generateProject, type GenerateProjectResponse } from "../lib/api";
+import {
+  type AttachmentDraft,
+  buildExportFileName,
+  exportProjectWord,
+  generateProject,
+  uploadProjectFiles,
+  type GenerateProjectResponse
+} from "../lib/api";
+import { AttachmentPanel } from "./attachment-panel";
+import { ExtractedTextReviewPanel } from "./extracted-text-review-panel";
 import { ExportPanel } from "./export-panel";
 import { FileUploadPanel } from "./file-upload-panel";
 import { GenerationStatus } from "./generation-status";
+import { PrefacePanel } from "./preface-panel";
 import { QuestionnairePanel } from "./questionnaire-panel";
 
 const DEFAULT_SOURCE_TEXT = `企业名称：苏州示例化工有限公司
+预案名称：苏州示例化工有限公司突发环境事件应急预案
+实施日期：2026年6月15日
+机构代码：91320500MA12345678
+法定代表人：张三
+联系人：李四
+联系电话：13800000000
+地址：苏州市工业园区示范路88号
+经纬度：东经120°00′00″，北纬31°00′00″
 所在地区：苏州市工业园区
-所属行业：精细化工`;
+所属行业：精细化工
+风险级别：一般`;
+
+const SOURCE_TEXT_LABELS: Record<string, string> = {
+  plan_name: "预案名称",
+  plan_version: "预案版本号",
+  plan_issue_date: "实施日期",
+  compiler_org: "编制单位",
+  legal_representative: "法定代表人",
+  contact_person: "联系人",
+  contact_phone: "联系电话",
+  address: "地址",
+  longitude_latitude: "经纬度",
+  risk_level: "风险级别",
+  risk_sources: "环境风险源",
+  risk_materials: "风险物质",
+  environmental_receptors: "周边环境风险受体",
+  pollutant_discharge: "污染物排放与治理措施",
+  emergency_org_structure: "应急组织体系",
+  emergency_contacts: "应急联系人",
+  emergency_resources: "应急资源",
+  warning_mechanism: "预警机制",
+  response_process: "应急响应流程",
+  onsite_disposal: "现场处置措施",
+  post_disposal: "后期处置",
+  training_plan: "培训计划",
+  drill_plan: "演练计划"
+};
+
+function mergeAnswersIntoSourceText(
+  currentSourceText: string,
+  answers: Record<string, string>
+) {
+  let nextSourceText = currentSourceText;
+
+  for (const [key, rawValue] of Object.entries(answers)) {
+    const value = rawValue.trim();
+    if (!value) {
+      continue;
+    }
+    const label = SOURCE_TEXT_LABELS[key] ?? key;
+    const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const fieldPattern = new RegExp(`(^|\\n)${escapedLabel}[:：].*`, "m");
+    const line = `${label}：${value}`;
+
+    if (fieldPattern.test(nextSourceText)) {
+      nextSourceText = nextSourceText.replace(fieldPattern, (_match, prefix) => {
+        return `${prefix}${line}`;
+      });
+    } else {
+      nextSourceText = `${nextSourceText.trimEnd()}\n${line}`;
+    }
+  }
+
+  return nextSourceText;
+}
+
+function buildCommunicationList(rows: AttachmentDraft["communication_rows"]) {
+  return ["应急通讯录", ...rows.map((row) => `${row.role}：${row.name} ${row.phone}`)].join(
+    "\n"
+  );
+}
+
+function buildMaterialsList(rows: AttachmentDraft["materials_rows"]) {
+  return [
+    "应急物资与装备清单",
+    ...rows.map(
+      (row) =>
+        `${row.item}｜数量：${row.quantity}｜位置：${row.location}｜责任人：${row.owner}｜备注：${row.notes}`
+    )
+  ].join("\n");
+}
 
 export function ProjectGenerationWorkflow({
   projectId
@@ -19,15 +108,28 @@ export function ProjectGenerationWorkflow({
 }) {
   const [sourceText, setSourceText] = useState(DEFAULT_SOURCE_TEXT);
   const [result, setResult] = useState<GenerateProjectResponse | null>(null);
+  const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>(
+    {}
+  );
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [pendingExtractedText, setPendingExtractedText] = useState("");
+  const [pendingWarnings, setPendingWarnings] = useState<string[]>([]);
+  const [attachmentDraft, setAttachmentDraft] = useState<AttachmentDraft | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleGenerate() {
+  async function runGeneration(nextSourceText: string) {
     setLoading(true);
     setError("");
     try {
-      const nextResult = await generateProject(projectId, sourceText);
+      const nextResult = await generateProject(projectId, nextSourceText);
       setResult(nextResult);
+      setAttachmentDraft(nextResult.attachments_payload);
+      setQuestionAnswers({});
     } catch (nextError) {
       setError(
         nextError instanceof Error ? nextError.message : "生成失败，请稍后重试"
@@ -37,9 +139,129 @@ export function ProjectGenerationWorkflow({
     }
   }
 
+  async function handleGenerate() {
+    await runGeneration(sourceText);
+  }
+
+  function handleAnswerChange(key: string, value: string) {
+    setQuestionAnswers((currentAnswers) => ({
+      ...currentAnswers,
+      [key]: value
+    }));
+  }
+
+  async function handleRegenerateWithAnswers() {
+    const mergedSourceText = mergeAnswersIntoSourceText(sourceText, questionAnswers);
+    setSourceText(mergedSourceText);
+    await runGeneration(mergedSourceText);
+  }
+
+  async function handleExportWord() {
+    setExporting(true);
+    setError("");
+    try {
+      const { blob } = await exportProjectWord(
+        projectId,
+        sourceText,
+        attachmentDraft ?? undefined
+      );
+      const fileName = buildExportFileName(projectId, result?.facts);
+      const objectUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = fileName;
+      anchor.click();
+      window.URL.revokeObjectURL(objectUrl);
+    } catch (nextError) {
+      setError(
+        nextError instanceof Error ? nextError.message : "Word 导出失败，请稍后重试"
+      );
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function handleFilesSelected(files: File[]) {
+    setUploading(true);
+    setError("");
+    setUploadMessage("");
+    try {
+      const result = await uploadProjectFiles(projectId, files);
+      let nextSourceText = sourceText;
+      if (result.extracted_text.trim()) {
+        nextSourceText = result.extracted_text;
+        setPendingExtractedText(nextSourceText);
+      }
+
+      setPendingWarnings(result.warnings);
+      if (result.warnings.length) {
+        setUploadMessage(result.warnings.join("；"));
+      } else {
+        setUploadMessage(`已完成 ${result.files.length} 个文件的文本抽取，请确认后生成。`);
+      }
+    } catch (nextError) {
+      setError(
+        nextError instanceof Error ? nextError.message : "文件抽取失败，请稍后重试"
+      );
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleConfirmExtractedText() {
+    const nextSourceText =
+      !sourceText.trim() || sourceText === DEFAULT_SOURCE_TEXT
+        ? pendingExtractedText
+        : `${sourceText.trimEnd()}\n\n${pendingExtractedText}`;
+    setSourceText(nextSourceText);
+    await runGeneration(nextSourceText);
+    setPendingExtractedText("");
+    setPendingWarnings([]);
+    setUploadMessage("抽取文本已确认并完成首次生成。");
+  }
+
+  function handleCommunicationRowsChange(
+    rows: AttachmentDraft["communication_rows"]
+  ) {
+    setAttachmentDraft((currentDraft) =>
+      currentDraft
+        ? {
+            ...currentDraft,
+            communication_rows: rows,
+            communication_list: buildCommunicationList(rows)
+          }
+        : currentDraft
+    );
+  }
+
+  function handleMaterialsRowsChange(rows: AttachmentDraft["materials_rows"]) {
+    setAttachmentDraft((currentDraft) =>
+      currentDraft
+        ? {
+            ...currentDraft,
+            materials_rows: rows,
+            materials_list: buildMaterialsList(rows)
+          }
+        : currentDraft
+    );
+  }
+
   return (
     <main>
-      <FileUploadPanel />
+      <FileUploadPanel
+        onFilesSelected={handleFilesSelected}
+        uploading={uploading}
+        helperText={uploadMessage}
+      />
+      {pendingExtractedText ? (
+        <ExtractedTextReviewPanel
+          extractedText={pendingExtractedText}
+          warnings={pendingWarnings}
+          confirming={loading}
+          onConfirm={handleConfirmExtractedText}
+          onChange={setPendingExtractedText}
+        />
+      ) : null}
       <section>
         <h2>原始资料文本</h2>
         <textarea
@@ -55,11 +277,50 @@ export function ProjectGenerationWorkflow({
       </section>
       {result ? (
         <>
-          <QuestionnairePanel questions={result.questions} />
+          <PrefacePanel
+            filingForm={result.preface_payload.filing_form}
+            releaseOrder={result.preface_payload.release_order}
+            filingDirectory={result.preface_payload.filing_directory}
+            compilationNotes={result.preface_payload.compilation_notes}
+          />
+          <AttachmentPanel
+            appendixCatalog={
+              attachmentDraft?.appendix_catalog ??
+              result.attachments_payload.appendix_catalog
+            }
+            communicationList={
+              attachmentDraft?.communication_list ??
+              result.attachments_payload.communication_list
+            }
+            materialsList={
+              attachmentDraft?.materials_list ??
+              result.attachments_payload.materials_list
+            }
+            communicationRows={
+              attachmentDraft?.communication_rows ??
+              result.attachments_payload.communication_rows
+            }
+            materialsRows={
+              attachmentDraft?.materials_rows ??
+              result.attachments_payload.materials_rows
+            }
+            onCommunicationRowsChange={handleCommunicationRowsChange}
+            onMaterialsRowsChange={handleMaterialsRowsChange}
+          />
+          <QuestionnairePanel
+            questions={result.questions}
+            answers={questionAnswers}
+            onAnswerChange={handleAnswerChange}
+            onRegenerate={handleRegenerateWithAnswers}
+            regenerating={loading}
+          />
           <GenerationStatus issues={result.issues} />
           <ExportPanel
             coverTitle={result.export_payload.cover_title}
             body={result.export_payload.body}
+            fullPreview={result.export_payload.full_preview}
+            onExportWord={handleExportWord}
+            exporting={exporting}
           />
         </>
       ) : null}

@@ -1,0 +1,16 @@
+{
+  "title": "企业事业单位突发环境事件应急预案备案表",
+  "fields": [
+    { "label": "单位名称", "key": "company_name", "fallback": "待补充单位名称" },
+    { "label": "机构代码", "key": "organization_code", "fallback": "待补充机构代码" },
+    { "label": "法定代表人", "key": "legal_representative", "fallback": "待补充法定代表人" },
+    { "label": "联系人", "key": "contact_person", "fallback": "待补充联系人" },
+    { "label": "联系人电话", "key": "contact_phone", "fallback": "待补充联系电话" },
+    { "label": "电子邮箱", "key": "email", "fallback": "待补充电子邮箱" },
+    { "label": "地址", "key": "address", "fallback": "待补充地址" },
+    { "label": "经纬度", "key": "longitude_latitude", "fallback": "待补充经纬度" },
+    { "label": "预案名称", "key": "plan_name", "fallback": "待补充预案名称" },
+    { "label": "风险级别", "key": "risk_level", "fallback": "待补充风险级别" },
+    { "label": "实施日期", "key": "plan_issue_date", "fallback": "待补充实施日期" }
+  ]
+}

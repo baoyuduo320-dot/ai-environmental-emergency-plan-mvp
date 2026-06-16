@@ -1,10 +1,30 @@
 {
   "required_fields": [
     "company_name",
+    "plan_name",
+    "plan_version",
+    "plan_issue_date",
+    "compiler_org",
+    "legal_representative",
+    "contact_person",
+    "contact_phone",
+    "address",
+    "longitude_latitude",
     "industry",
     "region",
+    "risk_level",
+    "risk_sources",
     "risk_materials",
+    "environmental_receptors",
+    "pollutant_discharge",
+    "emergency_org_structure",
     "emergency_contacts",
-    "emergency_resources"
+    "emergency_resources",
+    "warning_mechanism",
+    "response_process",
+    "onsite_disposal",
+    "post_disposal",
+    "training_plan",
+    "drill_plan"
   ]
 }

@@ -18,9 +18,9 @@ from app.validation.service import validate_document_payload
 
 def test_validate_document_payload_flags_missing_section_and_placeholder():
     payload = {
-        "sections": ["总则", "企业基本情况"],
+        "sections": ["总则", "资料准备与企业基本情况"],
         "content": "总则\n待补充",
     }
     issues = validate_document_payload(payload)
-    assert "missing_section:环境风险分析" in issues
+    assert "missing_section:环境风险识别与等级确定" in issues
     assert "placeholder_token:待补充" in issues

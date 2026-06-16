@@ -1,0 +1,16 @@
+{
+  "sections": [
+    {
+      "title": "一、编制概述",
+      "template": "为进一步规范{company_name}突发环境事件应急管理工作，提升环境风险防控和应急处置能力，{company_name}依据国家和地方有关环境保护、突发环境事件应急管理的法律法规、标准规范，结合{region}区域环境管理要求及本单位{industry}相关实际情况，组织开展了《{plan_name}》编制工作。现阶段已完成基础资料梳理、文本框架搭建和主要内容编写，形成了可供进一步论证完善的阶段性成果。"
+    },
+    {
+      "title": "二、编制原因",
+      "template": "{company_name}在生产运行和环境管理过程中涉及{risk_sources}等重点风险环节，同时需要围绕{risk_level}环境风险等级要求，进一步健全环境风险识别、预警响应、信息报送和现场处置机制。开展本次预案编制，旨在系统梳理风险物质、环境受体、应急资源和职责分工，推动预案内容与现有环保设施、管理制度及联动机制相衔接，为后续持续完善环境应急管理体系奠定基础。"
+    },
+    {
+      "title": "三、编制过程",
+      "template": "在本次预案编制过程中，{company_name}围绕资料收集、现场调查、风险识别、章节编写和内部校核等环节有序推进。前期重点核实了{risk_materials}、{pollutant_discharge}以及周边环境受体{environmental_receptors}等内容，并同步梳理了{emergency_org_structure}、{emergency_resources}和{response_process}。在此基础上，形成了当前预案文本，为后续结合论证意见进一步优化完善提供依据。"
+    }
+  ]
+}

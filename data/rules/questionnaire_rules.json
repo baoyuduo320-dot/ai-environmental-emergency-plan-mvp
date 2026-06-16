@@ -1,4 +1,25 @@
 {
+  "plan_name": "请补充预案正式名称，例如“XX单位突发环境事件应急预案”。",
+  "plan_version": "请补充预案版本号，例如“01版”或“03版”。",
+  "plan_issue_date": "请补充预案签署或实施日期。",
+  "compiler_org": "请补充预案编制单位名称。",
+  "legal_representative": "请补充法定代表人姓名。",
+  "contact_person": "请补充联系人姓名。",
+  "contact_phone": "请补充联系人联系电话。",
+  "address": "请补充企业地址。",
+  "longitude_latitude": "请补充企业经纬度信息。",
+  "risk_level": "请补充企业环境风险级别。",
+  "risk_sources": "请补充主要环境风险源及所在位置。",
   "risk_materials": "请补充风险物质名称、最大储量、存放位置和危险特性。",
-  "emergency_contacts": "请补充总指挥、现场处置负责人和联系电话。"
+  "environmental_receptors": "请补充周边环境风险受体信息，如居民点、河流、敏感目标等。",
+  "pollutant_discharge": "请补充污染物排放环节及现有治理措施。",
+  "emergency_org_structure": "请补充应急组织机构设置及主要职责。",
+  "emergency_contacts": "请补充总指挥、现场处置负责人和联系电话。",
+  "emergency_resources": "请补充应急资源与物资清单。",
+  "warning_mechanism": "请补充预警分级、预警条件和预警发布方式。",
+  "response_process": "请补充事故信息报告与应急响应流程。",
+  "onsite_disposal": "请补充主要突发环境事件的现场处置措施。",
+  "post_disposal": "请补充后期处置、环境恢复和事故总结要求。",
+  "training_plan": "请补充应急培训安排和频次。",
+  "drill_plan": "请补充应急演练安排和频次。"
 }

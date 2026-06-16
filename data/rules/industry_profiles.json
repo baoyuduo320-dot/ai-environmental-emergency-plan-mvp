@@ -1,0 +1,64 @@
+{
+  "profiles": [
+    {
+      "key": "hospital",
+      "match_keywords": ["医院", "医疗", "康复"],
+      "organization_type": "hospital",
+      "risk_sources": "医疗废水处理设施、医疗废物暂存间、消毒药剂存放点、柴油发电机房及火灾伴生污染环节",
+      "risk_materials": "次氯酸钠、消毒剂、医疗废物、废机油等风险物质的储量、位置和危险特性",
+      "environmental_receptors": "周边病患活动区域、居民点、道路及雨水管网受纳环境",
+      "pollutant_discharge": "医疗废水处理、消毒系统运行及火灾事故废水收集控制措施",
+      "warning_mechanism": "医疗废水超标、消毒设施故障、医疗废物异常贮存和火情预警机制",
+      "onsite_disposal": "医疗废水异常排放截流、医疗废物泄漏收集、消毒药剂泄漏处置及人员疏散转移措施",
+      "emergency_resources": "吸附材料、堵漏工具、防化用品、转运箱、消杀物资和外部医疗联动资源"
+    },
+    {
+      "key": "sewage",
+      "match_keywords": ["污水", "污水处理", "污水处理厂", "水务"],
+      "organization_type": "default",
+      "risk_sources": "进出水泵房、生化池、加药间、消毒单元、污泥脱水间、事故池及排口",
+      "risk_materials": "消毒药剂、絮凝剂、污泥、废机油等风险物质的最大储量、位置和危险特性",
+      "environmental_receptors": "受纳水体、周边沟渠、居民点及下游敏感目标",
+      "pollutant_discharge": "异常进水、超标排放、旁路排放和事故池截流调蓄措施",
+      "warning_mechanism": "进出水水质异常、停电停机、药剂系统故障和极端天气联动预警机制",
+      "onsite_disposal": "超标废水截流回流、药剂泄漏围堵、中断排放和排口应急控制措施",
+      "emergency_resources": "应急泵、发电设备、堵漏围堰、吸附材料、水质快检和外部应急转运资源"
+    },
+    {
+      "key": "machinery",
+      "match_keywords": ["机械", "制造", "机加工", "喷漆", "总厂"],
+      "organization_type": "default",
+      "risk_sources": "喷漆房、危化品库、机油暂存区、活性炭吸附装置和危险废物暂存间",
+      "risk_materials": "机油、环己酮、油漆、稀释剂、乙炔等风险物质的最大储量、位置和危险特性",
+      "environmental_receptors": "周边厂区、居民点、雨水管网和附近地表水体",
+      "pollutant_discharge": "喷涂废气治理设施、有机废气收集系统和事故状态下含油废水控制措施",
+      "warning_mechanism": "喷漆设施异常、危化品泄漏、废气治理设备停运和动火作业联动预警机制",
+      "onsite_disposal": "油类泄漏围堵回收、危化品泄漏吸附收集、火灾事故废水控制及喷漆废气异常处置",
+      "emergency_resources": "防爆工具、吸油棉、堵漏袋、消防沙箱、备用活性炭和外部危废转运资源"
+    },
+    {
+      "key": "chemical",
+      "match_keywords": ["化工", "新材料", "化学", "材料"],
+      "organization_type": "default",
+      "risk_sources": "危化品储罐区、危废暂存间、废气治理设施、污水处理设施和重点生产装置",
+      "risk_materials": "危险化学品、废机油、危险废物及辅料的最大储量、位置和危险特性",
+      "environmental_receptors": "周边居民点、雨水排口、地表水体、地下水和其他环境敏感目标",
+      "pollutant_discharge": "废气治理设施、污水处理站、雨污分流系统和事故状态下截流收集措施",
+      "warning_mechanism": "危化品泄漏、治理设施异常、超标排放和极端天气叠加风险预警机制",
+      "onsite_disposal": "危化品泄漏堵漏围堰、火灾爆炸次生污染控制、废气废水异常排放拦截和人员疏散措施",
+      "emergency_resources": "防化服、空气呼吸器、堵漏工具、吸附材料、应急池、监测仪器和外部联动资源"
+    },
+    {
+      "key": "mine",
+      "match_keywords": ["煤矿", "矿业", "矿", "瓦斯"],
+      "organization_type": "mine",
+      "risk_sources": "污水处理站、消毒药剂间、瓦斯抽采站、危废暂存点及矿区排水设施",
+      "risk_materials": "次氯酸钠、油类、危废和辅助药剂等风险物质的最大储量、位置和危险特性",
+      "environmental_receptors": "矿区周边村庄、基本农田、地表水体、地下水及排水沟渠",
+      "pollutant_discharge": "矿井水处理、消毒单元运行和事故状态下矿区排水控制措施",
+      "warning_mechanism": "矿井水异常、药剂泄漏、瓦斯附属设施异常和暴雨排水风险预警机制",
+      "onsite_disposal": "药剂泄漏围堵回收、矿井水异常截流、排水口应急控制和关联区域人员疏散措施",
+      "emergency_resources": "堵漏器材、抽排设备、监测仪器、警戒设施和外部矿山救援联动资源"
+    }
+  ]
+}
