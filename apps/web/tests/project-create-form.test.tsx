@@ -14,5 +14,9 @@ describe("ProjectCreateForm", () => {
     expect(screen.getByLabelText("服务模式")).toBeInTheDocument();
     expect(screen.getByText("标准版")).toBeInTheDocument();
     expect(screen.getByText("专业版")).toBeInTheDocument();
+    expect(screen.getByText("环保应急预案")).toBeInTheDocument();
+    expect(screen.getByText("守住环境风险底线")).toBeInTheDocument();
+    expect(screen.getByText("基础信息")).toBeInTheDocument();
+    expect(screen.getByText("风险与用途")).toBeInTheDocument();
   });
 });
