@@ -1,4 +1,5 @@
 const DEFAULT_WORKER_URL = "http://127.0.0.1:8001";
+const WORKER_TIMEOUT_MS = 2500;
 
 async function buildFallbackExtraction(files: File[]) {
   const extractedFiles = await Promise.all(
@@ -42,13 +43,16 @@ export async function POST(
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), WORKER_TIMEOUT_MS);
     const workerResponse = await fetch(
       `${process.env.WORKER_BASE_URL ?? DEFAULT_WORKER_URL}/extract-text`,
       {
         method: "POST",
+        signal: controller.signal,
         body: workerFormData
       }
-    );
+    ).finally(() => clearTimeout(timeoutId));
 
     if (workerResponse.ok) {
       return new Response(await workerResponse.text(), {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 const DEFAULT_WORKER_URL = "http://127.0.0.1:8001";
+const WORKER_TIMEOUT_MS = 2500;
 
 function readSourceField(sourceText: string, label: string) {
   const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -113,6 +114,8 @@ export async function POST(
   const { projectId } = await params;
   const sourceText = body.source_text ?? "";
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), WORKER_TIMEOUT_MS);
     const workerResponse = await fetch(
       `${process.env.WORKER_BASE_URL ?? DEFAULT_WORKER_URL}/generate`,
       {
@@ -120,12 +123,13 @@ export async function POST(
         headers: {
           "Content-Type": "application/json"
         },
+        signal: controller.signal,
         body: JSON.stringify({
           project_id: body.project_id ?? projectId,
           source_text: sourceText
         })
       }
-    );
+    ).finally(() => clearTimeout(timeoutId));
 
     if (workerResponse.ok) {
       return NextResponse.json(await workerResponse.json());
