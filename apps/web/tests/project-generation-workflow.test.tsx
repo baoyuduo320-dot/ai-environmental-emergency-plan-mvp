@@ -149,9 +149,19 @@ describe("ProjectGenerationWorkflow", () => {
       });
 
     render(<ProjectGenerationWorkflow projectId="demo-project-001" />);
+    expect(screen.getByText("企业基础信息")).toBeInTheDocument();
+    expect(screen.getByLabelText("企业名称")).toBeInTheDocument();
+    expect(screen.getByLabelText("所属行业")).toBeInTheDocument();
+    expect(screen.getByLabelText("所在地区")).toBeInTheDocument();
+    expect(screen.getByLabelText("环境风险等级")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "生成报告" })).toBeInTheDocument();
     expect(screen.getByText("上传历史预案")).toBeInTheDocument();
     expect(screen.getByText("持续学习")).toBeInTheDocument();
     expect(screen.getByText(/每次上传、补充和重新生成都会沉淀为项目知识/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("企业名称"), {
+      target: { value: "页面输入测试公司" }
+    });
+    expect(screen.getByDisplayValue(/企业名称：页面输入测试公司/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("资料上传"), {
       target: {
         files: [
@@ -172,6 +182,9 @@ describe("ProjectGenerationWorkflow", () => {
     );
     expect(screen.getByText("抽取结果确认")).toBeInTheDocument();
     expect(screen.getByText("已完成 1 个文件的文本抽取，请确认后生成。")).toBeInTheDocument();
+    expect(
+      screen.getByText("上传成功：已完成 1 个文件文本抽取，请确认抽取结果后生成报告。")
+    ).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("抽取结果文本"), {
       target: { value: "企业名称：上传测试公司\n所属行业：精细化工\n风险级别：一般" }
     });

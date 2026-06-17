@@ -1,11 +1,13 @@
 export function FileUploadPanel({
   onFilesSelected,
   uploading,
-  helperText
+  helperText,
+  statusText
 }: {
   onFilesSelected: (files: File[]) => void;
   uploading: boolean;
   helperText: string;
+  statusText?: string;
 }) {
   return (
     <section className="border border-[#d8e4dc] bg-white p-5">
@@ -33,6 +35,14 @@ export function FileUploadPanel({
         }}
         disabled={uploading}
       />
+      {statusText ? (
+        <p
+          aria-live="polite"
+          className="mt-3 border border-[#9fc5aa] bg-[#eef8f0] px-3 py-2 text-sm font-medium text-[#123c2b]"
+        >
+          {statusText}
+        </p>
+      ) : null}
       <p className="mt-3 text-sm leading-6 text-[#4d6f5f]">
         {uploading
           ? "资料抽取中..."

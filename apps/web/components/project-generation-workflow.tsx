@@ -31,6 +31,13 @@ const DEFAULT_SOURCE_TEXT = `企业名称：苏州示例化工有限公司
 所属行业：精细化工
 风险级别：一般`;
 
+const BASIC_FIELD_LABELS = {
+  companyName: "企业名称",
+  industry: "所属行业",
+  region: "所在地区",
+  riskLevel: "风险级别"
+};
+
 const SOURCE_TEXT_LABELS: Record<string, string> = {
   plan_name: "预案名称",
   plan_version: "预案版本号",
@@ -85,6 +92,24 @@ function mergeAnswersIntoSourceText(
   return nextSourceText;
 }
 
+function readSourceField(sourceText: string, label: string) {
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = sourceText.match(new RegExp(`(^|\\n)${escapedLabel}[:：]([^\\n]*)`));
+  return match?.[2]?.trim() ?? "";
+}
+
+function upsertSourceField(sourceText: string, label: string, value: string) {
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const line = `${label}：${value}`;
+  const fieldPattern = new RegExp(`(^|\\n)${escapedLabel}[:：].*`, "m");
+
+  if (fieldPattern.test(sourceText)) {
+    return sourceText.replace(fieldPattern, (_match, prefix) => `${prefix}${line}`);
+  }
+
+  return `${sourceText.trimEnd()}\n${line}`;
+}
+
 function buildCommunicationList(rows: AttachmentDraft["communication_rows"]) {
   return ["应急通讯录", ...rows.map((row) => `${row.role}：${row.name} ${row.phone}`)].join(
     "\n"
@@ -113,6 +138,7 @@ export function ProjectGenerationWorkflow({
   );
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
+  const [uploadStatusText, setUploadStatusText] = useState("");
   const [pendingExtractedText, setPendingExtractedText] = useState("");
   const [pendingWarnings, setPendingWarnings] = useState<string[]>([]);
   const [attachmentDraft, setAttachmentDraft] = useState<AttachmentDraft | null>(
@@ -141,6 +167,15 @@ export function ProjectGenerationWorkflow({
 
   async function handleGenerate() {
     await runGeneration(sourceText);
+  }
+
+  function handleBasicInfoChange(
+    field: keyof typeof BASIC_FIELD_LABELS,
+    value: string
+  ) {
+    setSourceText((currentSourceText) =>
+      upsertSourceField(currentSourceText, BASIC_FIELD_LABELS[field], value)
+    );
   }
 
   function handleAnswerChange(key: string, value: string) {
@@ -185,6 +220,7 @@ export function ProjectGenerationWorkflow({
     setUploading(true);
     setError("");
     setUploadMessage("");
+    setUploadStatusText("");
     try {
       const result = await uploadProjectFiles(projectId, files);
       let nextSourceText = sourceText;
@@ -198,6 +234,9 @@ export function ProjectGenerationWorkflow({
         setUploadMessage(result.warnings.join("；"));
       } else {
         setUploadMessage(`已完成 ${result.files.length} 个文件的文本抽取，请确认后生成。`);
+        setUploadStatusText(
+          `上传成功：已完成 ${result.files.length} 个文件文本抽取，请确认抽取结果后生成报告。`
+        );
       }
     } catch (nextError) {
       setError(
@@ -218,6 +257,7 @@ export function ProjectGenerationWorkflow({
     setPendingExtractedText("");
     setPendingWarnings([]);
     setUploadMessage("抽取文本已确认并完成首次生成。");
+    setUploadStatusText("");
   }
 
   function handleCommunicationRowsChange(
@@ -258,10 +298,82 @@ export function ProjectGenerationWorkflow({
             从历史预案和补充信息中持续学习企业风险特征，逐步完善风险识别、应急资源、组织架构和现场处置内容。
           </p>
         </section>
+      <section className="border border-[#d8e4dc] bg-white p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-[#4d6f5f]">项目信息</p>
+            <h2 className="mt-1 text-xl font-semibold">企业基础信息</h2>
+          </div>
+          <p className="max-w-md text-sm leading-6 text-[#4d6f5f]">
+            先确认企业名称、行业、地区和风险等级，这些信息会同步到原始资料文本并参与报告生成。
+          </p>
+        </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium">
+            企业名称
+            <input
+              aria-label="企业名称"
+              className="mt-2 w-full border border-[#c7d8cc] bg-[#fbfdfb] px-3 py-3 outline-none focus:border-[#2f6b4f]"
+              value={readSourceField(sourceText, BASIC_FIELD_LABELS.companyName)}
+              onChange={(event) =>
+                handleBasicInfoChange("companyName", event.target.value)
+              }
+            />
+          </label>
+          <label className="block text-sm font-medium">
+            所属行业
+            <input
+              aria-label="所属行业"
+              className="mt-2 w-full border border-[#c7d8cc] bg-[#fbfdfb] px-3 py-3 outline-none focus:border-[#2f6b4f]"
+              value={readSourceField(sourceText, BASIC_FIELD_LABELS.industry)}
+              onChange={(event) =>
+                handleBasicInfoChange("industry", event.target.value)
+              }
+            />
+          </label>
+          <label className="block text-sm font-medium">
+            所在地区
+            <input
+              aria-label="所在地区"
+              className="mt-2 w-full border border-[#c7d8cc] bg-[#fbfdfb] px-3 py-3 outline-none focus:border-[#2f6b4f]"
+              value={readSourceField(sourceText, BASIC_FIELD_LABELS.region)}
+              onChange={(event) =>
+                handleBasicInfoChange("region", event.target.value)
+              }
+            />
+          </label>
+          <label className="block text-sm font-medium">
+            环境风险等级
+            <select
+              aria-label="环境风险等级"
+              className="mt-2 w-full border border-[#c7d8cc] bg-[#fbfdfb] px-3 py-3 outline-none focus:border-[#2f6b4f]"
+              value={readSourceField(sourceText, BASIC_FIELD_LABELS.riskLevel)}
+              onChange={(event) =>
+                handleBasicInfoChange("riskLevel", event.target.value)
+              }
+            >
+              <option>待系统判定</option>
+              <option>一般</option>
+              <option>较大</option>
+              <option>重大</option>
+            </select>
+          </label>
+        </div>
+        <button
+          className="mt-5 h-11 bg-[#123c2b] px-6 font-semibold text-white transition hover:bg-[#0d2d20]"
+          type="button"
+          onClick={handleGenerate}
+          disabled={loading}
+        >
+          {loading ? "生成中..." : "生成报告"}
+        </button>
+        {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
+      </section>
       <FileUploadPanel
         onFilesSelected={handleFilesSelected}
         uploading={uploading}
         helperText={uploadMessage}
+        statusText={uploadStatusText}
       />
       {pendingExtractedText ? (
         <ExtractedTextReviewPanel
@@ -281,15 +393,6 @@ export function ProjectGenerationWorkflow({
           value={sourceText}
           onChange={(event) => setSourceText(event.target.value)}
         />
-        <button
-          className="mt-3 h-11 bg-[#123c2b] px-6 font-semibold text-white transition hover:bg-[#0d2d20]"
-          type="button"
-          onClick={handleGenerate}
-          disabled={loading}
-        >
-          {loading ? "生成中..." : "开始生成"}
-        </button>
-        {error ? <p>{error}</p> : null}
       </section>
       {result ? (
         <>
