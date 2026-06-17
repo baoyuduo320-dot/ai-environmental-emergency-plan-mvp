@@ -38,6 +38,8 @@ const BASIC_FIELD_LABELS = {
   riskLevel: "风险级别"
 };
 
+type InitialProject = Partial<Record<keyof typeof BASIC_FIELD_LABELS, string>>;
+
 const SOURCE_TEXT_LABELS: Record<string, string> = {
   plan_name: "预案名称",
   plan_version: "预案版本号",
@@ -126,12 +128,27 @@ function buildMaterialsList(rows: AttachmentDraft["materials_rows"]) {
   ].join("\n");
 }
 
+function buildInitialSourceText(initialProject?: InitialProject) {
+  const entries = Object.entries(BASIC_FIELD_LABELS)
+    .map(([field, label]) => {
+      const value = initialProject?.[field as keyof typeof BASIC_FIELD_LABELS]?.trim();
+      return value ? `${label}：${value}` : "";
+    })
+    .filter(Boolean);
+
+  return entries.length ? entries.join("\n") : DEFAULT_SOURCE_TEXT;
+}
+
 export function ProjectGenerationWorkflow({
-  projectId
+  projectId,
+  initialProject
 }: {
   projectId: string;
+  initialProject?: InitialProject;
 }) {
-  const [sourceText, setSourceText] = useState(DEFAULT_SOURCE_TEXT);
+  const [sourceText, setSourceText] = useState(() =>
+    buildInitialSourceText(initialProject)
+  );
   const [result, setResult] = useState<GenerateProjectResponse | null>(null);
   const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>(
     {}

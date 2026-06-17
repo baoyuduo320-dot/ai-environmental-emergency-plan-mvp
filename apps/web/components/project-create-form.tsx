@@ -41,7 +41,15 @@ export function ProjectCreateForm() {
         throw new Error("创建项目失败，未返回项目编号");
       }
 
-      router.push(`/projects/${data.projectId}`);
+      const nextParams = new URLSearchParams();
+      for (const key of ["companyName", "industry", "region", "riskLevel"]) {
+        const value = payload[key];
+        if (typeof value === "string" && value.trim()) {
+          nextParams.set(key, value);
+        }
+      }
+      const query = nextParams.toString();
+      router.push(`/projects/${data.projectId}${query ? `?${query}` : ""}`);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "创建项目失败，请稍后重试");
     } finally {

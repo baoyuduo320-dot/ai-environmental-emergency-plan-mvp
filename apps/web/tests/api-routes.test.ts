@@ -1,9 +1,27 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { POST as createProject } from "../app/api/projects/route";
 import { POST as uploadFiles } from "../app/api/projects/[projectId]/files/route";
 import { POST as generateReport } from "../app/api/projects/[projectId]/generate/route";
 
 describe("project API route fallbacks", () => {
+  it("creates a unique project id instead of always returning the demo project", async () => {
+    const response = await createProject(new Request("http://local", {
+      method: "POST",
+      body: JSON.stringify({
+        companyName: "绿色测试企业有限公司",
+        industry: "环保设备制造",
+        region: "江苏省苏州市"
+      })
+    }));
+
+    expect(response.ok).toBe(true);
+    const payload = await response.json();
+    expect(payload.projectId).toMatch(/^project-/);
+    expect(payload.projectId).not.toBe("demo-project-001");
+    expect(payload.companyName).toBe("绿色测试企业有限公司");
+  });
+
   it("returns extracted text when the worker file extraction service is unavailable", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("worker down")));
     const formData = new FormData();

@@ -4,6 +4,27 @@ import { vi } from "vitest";
 import { ProjectGenerationWorkflow } from "../components/project-generation-workflow";
 
 describe("ProjectGenerationWorkflow", () => {
+  it("uses created project details as the initial source text", () => {
+    render(
+      <ProjectGenerationWorkflow
+        projectId="project-green-test"
+        initialProject={{
+          companyName: "绿色测试企业有限公司",
+          industry: "环保设备制造",
+          region: "江苏省苏州市",
+          riskLevel: "待系统判定"
+        }}
+      />
+    );
+
+    expect(screen.getByLabelText("企业名称")).toHaveValue("绿色测试企业有限公司");
+    expect(screen.getByLabelText("所属行业")).toHaveValue("环保设备制造");
+    expect(screen.getByLabelText("所在地区")).toHaveValue("江苏省苏州市");
+    expect(screen.getByLabelText("原始资料文本")).toHaveTextContent(
+      "企业名称：绿色测试企业有限公司"
+    );
+  });
+
   it("uploads files, confirms extraction, supports补问回填、附件表格 and word export", async () => {
     const fetchMock = vi
       .fn()

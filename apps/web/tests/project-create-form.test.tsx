@@ -65,6 +65,14 @@ describe("ProjectCreateForm", () => {
         })
       )
     );
-    expect(pushMock).toHaveBeenCalledWith("/projects/demo-project-001");
+    expect(pushMock).toHaveBeenCalledWith(
+      expect.stringContaining("/projects/demo-project-001?companyName=")
+    );
+    expect(decodeURIComponent(pushMock.mock.calls[0][0])).toContain(
+      "companyName=苏州示例化工有限公司"
+    );
+    expect(decodeURIComponent(pushMock.mock.calls[0][0])).toContain(
+      "industry=精细化工"
+    );
   });
 });
