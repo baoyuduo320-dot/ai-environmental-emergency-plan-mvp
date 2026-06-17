@@ -1,3 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 const serviceModes = ["自助生成", "辅助编制", "专业代编"];
 
 const tiers = [
@@ -16,9 +21,50 @@ const tiers = [
 ];
 
 export function ProjectCreateForm() {
+  const router = useRouter();
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCreating(true);
+    setError("");
+
+    const formData = new FormData(event.currentTarget);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error("创建项目失败，请稍后重试");
+      }
+
+      const data = (await response.json()) as { projectId?: string };
+      if (!data.projectId) {
+        throw new Error("创建项目失败，未返回项目编号");
+      }
+
+      router.push(`/projects/${data.projectId}`);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "创建项目失败，请稍后重试");
+    } finally {
+      setCreating(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#eef5ef] px-5 py-8 text-[#16231c]">
-      <form className="mx-auto max-w-5xl overflow-hidden border border-[#c7d8cc] bg-white shadow-sm">
+      <form
+        className="mx-auto max-w-5xl overflow-hidden border border-[#c7d8cc] bg-white shadow-sm"
+        onSubmit={handleSubmit}
+      >
         <section className="grid gap-8 bg-[#123c2b] px-6 py-8 text-white md:grid-cols-[1fr_220px] md:px-8">
           <div>
             <p className="text-sm font-medium text-[#b9d8c4]">环保应急预案</p>
@@ -189,11 +235,13 @@ export function ProjectCreateForm() {
 
             <button
               className="h-12 bg-[#123c2b] px-8 font-semibold text-white transition hover:bg-[#0d2d20]"
+              disabled={creating}
               type="submit"
             >
-              创建项目
+              {creating ? "创建中..." : "创建项目"}
             </button>
           </div>
+          {error ? <p className="text-sm text-red-700">{error}</p> : null}
         </section>
       </form>
     </main>

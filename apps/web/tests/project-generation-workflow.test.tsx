@@ -149,6 +149,7 @@ describe("ProjectGenerationWorkflow", () => {
       });
 
     render(<ProjectGenerationWorkflow projectId="demo-project-001" />);
+    expect(screen.getByText("上传历史预案")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("资料上传"), {
       target: {
         files: [

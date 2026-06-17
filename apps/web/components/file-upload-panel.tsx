@@ -9,7 +9,7 @@ export function FileUploadPanel({
 }) {
   return (
     <section>
-      <h2>资料上传</h2>
+      <h2>上传历史预案</h2>
       <input
         type="file"
         multiple
@@ -27,7 +27,8 @@ export function FileUploadPanel({
       <p>
         {uploading
           ? "资料抽取中..."
-          : helperText || "支持上传 pdf、docx、doc，抽取后的文本会自动回填到下方。"}
+          : helperText ||
+            "支持上传历史预案、环评资料、备案材料的 pdf、docx、doc，抽取后的文本会自动回填到下方。"}
       </p>
     </section>
   );
