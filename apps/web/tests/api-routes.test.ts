@@ -50,4 +50,51 @@ describe("project API route fallbacks", () => {
     expect(payload.preface_payload.filing_form).toContain("离线测试公司");
     expect(payload.export_payload.full_preview).toContain("突发环境事件应急预案");
   });
+
+  it("passes an abort signal to worker requests so Render cold starts can be bounded", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        facts: {},
+        questions: {},
+        issues: [],
+        attachments_payload: {
+          appendix_catalog: "",
+          communication_list: "",
+          materials_list: "",
+          communication_rows: [],
+          materials_rows: []
+        },
+        preface_payload: {
+          filing_form: "",
+          release_order: "",
+          filing_directory: "",
+          compilation_notes: ""
+        },
+        export_payload: {
+          cover_title: "",
+          body: "",
+          full_preview: ""
+        }
+      })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await generateReport(new Request("http://local", {
+      method: "POST",
+      body: JSON.stringify({
+        project_id: "demo-project-001",
+        source_text: "企业名称：冷启动测试公司"
+      })
+    }), {
+      params: Promise.resolve({ projectId: "demo-project-001" })
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/generate"),
+      expect.objectContaining({
+        signal: expect.any(AbortSignal)
+      })
+    );
+  });
 });

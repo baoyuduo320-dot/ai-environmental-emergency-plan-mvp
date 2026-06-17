@@ -365,8 +365,17 @@ export function ProjectGenerationWorkflow({
           onClick={handleGenerate}
           disabled={loading}
         >
-          {loading ? "生成中..." : "生成报告"}
+          {loading ? "正在唤醒后端并生成报告..." : "生成报告"}
         </button>
+        {loading ? (
+          <p className="mt-3 text-sm leading-6 text-[#4d6f5f]">
+            首次生成可能需要等待 Render 后端启动，请保持页面打开。
+          </p>
+        ) : (
+          <p className="mt-3 text-xs leading-5 text-[#6c7d71]">
+            首次生成可能需要等待 Render 后端启动，系统会自动完成报告生成。
+          </p>
+        )}
         {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       </section>
       <FileUploadPanel

@@ -1,5 +1,5 @@
 const DEFAULT_WORKER_URL = "http://127.0.0.1:8001";
-const WORKER_TIMEOUT_MS = 2500;
+const WORKER_TIMEOUT_MS = 45000;
 
 async function buildFallbackExtraction(files: File[]) {
   const extractedFiles = await Promise.all(

@@ -45,10 +45,15 @@ export function FileUploadPanel({
       ) : null}
       <p className="mt-3 text-sm leading-6 text-[#4d6f5f]">
         {uploading
-          ? "资料抽取中..."
+          ? "正在唤醒后端并抽取资料，首次上传可能需要 30 秒左右..."
           : helperText ||
             "支持上传历史预案、环评资料、备案材料的 pdf、docx、doc，系统会抽取企业基础信息、风险源、应急资源和组织架构。"}
       </p>
+      {!uploading ? (
+        <p className="mt-2 text-xs leading-5 text-[#6c7d71]">
+          首次上传可能需要 30 秒左右用于唤醒后端抽取服务，请保持页面打开。
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -155,7 +155,9 @@ describe("ProjectGenerationWorkflow", () => {
     expect(screen.getByLabelText("所在地区")).toBeInTheDocument();
     expect(screen.getByLabelText("环境风险等级")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "生成报告" })).toBeInTheDocument();
+    expect(screen.getByText(/首次生成可能需要等待 Render 后端启动/)).toBeInTheDocument();
     expect(screen.getByText("上传历史预案")).toBeInTheDocument();
+    expect(screen.getByText(/首次上传可能需要 30 秒左右/)).toBeInTheDocument();
     expect(screen.getByText("持续学习")).toBeInTheDocument();
     expect(screen.getByText(/每次上传、补充和重新生成都会沉淀为项目知识/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("企业名称"), {
