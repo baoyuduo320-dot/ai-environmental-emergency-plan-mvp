@@ -3,21 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const serviceModes = ["自助生成", "辅助编制", "专业代编"];
-
-const tiers = [
-  {
-    name: "免费体验",
-    description: "预览生成流程"
-  },
-  {
-    name: "标准版",
-    description: "完整生成与导出"
-  },
-  {
-    name: "专业版",
-    description: "协作、台账与规则更新"
-  }
+const learningSteps = [
+  "上传历史预案",
+  "抽取企业风险信息",
+  "形成项目知识库",
+  "生成后持续优化"
 ];
 
 export function ProjectCreateForm() {
@@ -60,24 +50,33 @@ export function ProjectCreateForm() {
   }
 
   return (
-    <main className="min-h-screen bg-[#eef5ef] px-5 py-8 text-[#16231c]">
+    <main className="min-h-screen bg-[#edf4ee] px-5 py-8 text-[#16231c]">
       <form
-        className="mx-auto max-w-5xl overflow-hidden border border-[#c7d8cc] bg-white shadow-sm"
+        className="mx-auto max-w-4xl overflow-hidden border border-[#c7d8cc] bg-white shadow-sm"
         onSubmit={handleSubmit}
       >
-        <section className="grid gap-8 bg-[#123c2b] px-6 py-8 text-white md:grid-cols-[1fr_220px] md:px-8">
+        <section className="grid gap-8 bg-[#123c2b] px-6 py-8 text-white md:grid-cols-[1fr_240px] md:px-8">
           <div>
-            <p className="text-sm font-medium text-[#b9d8c4]">环保应急预案</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-normal sm:text-4xl">
-              创建环境应急预案项目
+            <p className="text-sm font-medium text-[#b9d8c4]">
+              环境应急预案智能编制
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-normal">
+              创建企业预案项目
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-[#d9eadf]">
-              围绕企业环境风险、应急资源和备案用途建立项目档案，先把关键信息整理清楚，再进入 AI 编制流程。
+              先整理企业基础信息，再上传历史预案。系统会从每次上传、补充和生成结果中持续学习企业风险特征，让后续预案更贴近实际。
             </p>
           </div>
           <div className="border border-[#79a489] bg-[#1d4b36] p-5">
-            <p className="text-sm text-[#b9d8c4]">工作目标</p>
-            <p className="mt-2 text-2xl font-semibold">守住环境风险底线</p>
+            <p className="text-sm text-[#b9d8c4]">持续学习企业风险特征</p>
+            <ul className="mt-3 space-y-2 text-sm leading-5 text-[#eef7f0]">
+              {learningSteps.map((step) => (
+                <li className="flex gap-2" key={step}>
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-[#b9d8c4]" />
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -132,6 +131,13 @@ export function ProjectCreateForm() {
               </label>
             </div>
           </div>
+
+          <section className="border border-[#d8e4dc] bg-[#f7faf7] p-5">
+            <h2 className="text-lg font-semibold">形成项目知识库</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#4d6f5f]">
+              历史预案、环评资料、备案材料和后续补充内容会汇总为项目知识。每次重新生成都会基于这些资料更新企业风险源、应急资源、组织架构和处置措施。
+            </p>
+          </section>
 
           <div>
             <div className="flex items-center gap-3 border-b border-[#d8e4dc] pb-3">
@@ -194,47 +200,12 @@ export function ProjectCreateForm() {
             </div>
           </div>
 
-          <div className="grid gap-5 border-t border-[#d8e4dc] pt-6 lg:grid-cols-[1fr_1.4fr_auto] lg:items-end">
-            <label className="block text-sm font-medium">
-              服务模式
-              <select
-                aria-label="服务模式"
-                className="mt-2 w-full border border-[#c7d8cc] bg-[#fbfdfb] px-3 py-3 outline-none focus:border-[#2f6b4f]"
-                name="serviceMode"
-              >
-                {serviceModes.map((mode) => (
-                  <option key={mode}>{mode}</option>
-                ))}
-              </select>
-            </label>
-
-            <fieldset>
-              <legend className="text-sm font-medium text-[#4d6f5f]">套餐预留</legend>
-              <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                {tiers.map((tier, index) => (
-                  <label
-                    className="flex min-h-20 gap-3 border border-[#d8e4dc] bg-[#fbfdfb] p-3 text-sm"
-                    key={tier.name}
-                  >
-                    <input
-                      defaultChecked={index === 0}
-                      name="tier"
-                      type="radio"
-                      value={tier.name}
-                    />
-                    <span>
-                      <strong className="block">{tier.name}</strong>
-                      <span className="mt-1 block text-xs leading-5 text-[#5b7167]">
-                        {tier.description}
-                      </span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
+          <div className="flex flex-col gap-3 border-t border-[#d8e4dc] pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-xl text-sm leading-6 text-[#4d6f5f]">
+              创建后进入项目工作台，优先上传历史预案，让系统从旧资料开始学习。
+            </p>
             <button
-              className="h-12 bg-[#123c2b] px-8 font-semibold text-white transition hover:bg-[#0d2d20]"
+              className="h-12 shrink-0 bg-[#123c2b] px-8 font-semibold text-white transition hover:bg-[#0d2d20]"
               disabled={creating}
               type="submit"
             >

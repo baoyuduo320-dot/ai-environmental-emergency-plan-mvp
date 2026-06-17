@@ -247,7 +247,17 @@ export function ProjectGenerationWorkflow({
   }
 
   return (
-    <main>
+    <main className="min-h-screen bg-[#edf4ee] px-5 py-8 text-[#16231c]">
+      <div className="mx-auto grid max-w-5xl gap-5">
+        <section className="border border-[#c7d8cc] bg-[#123c2b] px-6 py-7 text-white">
+          <p className="text-sm font-medium text-[#b9d8c4]">项目工作台</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-normal">
+            环境应急预案智能编制
+          </h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-[#d9eadf]">
+            从历史预案和补充信息中持续学习企业风险特征，逐步完善风险识别、应急资源、组织架构和现场处置内容。
+          </p>
+        </section>
       <FileUploadPanel
         onFilesSelected={handleFilesSelected}
         uploading={uploading}
@@ -262,15 +272,21 @@ export function ProjectGenerationWorkflow({
           onChange={setPendingExtractedText}
         />
       ) : null}
-      <section>
+      <section className="border border-[#d8e4dc] bg-white p-5">
         <h2>原始资料文本</h2>
         <textarea
+          className="mt-3 w-full border border-[#c7d8cc] bg-[#fbfdfb] p-3 text-sm leading-6 outline-none focus:border-[#2f6b4f]"
           aria-label="原始资料文本"
           rows={8}
           value={sourceText}
           onChange={(event) => setSourceText(event.target.value)}
         />
-        <button type="button" onClick={handleGenerate} disabled={loading}>
+        <button
+          className="mt-3 h-11 bg-[#123c2b] px-6 font-semibold text-white transition hover:bg-[#0d2d20]"
+          type="button"
+          onClick={handleGenerate}
+          disabled={loading}
+        >
           {loading ? "生成中..." : "开始生成"}
         </button>
         {error ? <p>{error}</p> : null}
@@ -324,6 +340,7 @@ export function ProjectGenerationWorkflow({
           />
         </>
       ) : null}
+      </div>
     </main>
   );
 }

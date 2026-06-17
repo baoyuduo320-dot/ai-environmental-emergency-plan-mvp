@@ -150,6 +150,8 @@ describe("ProjectGenerationWorkflow", () => {
 
     render(<ProjectGenerationWorkflow projectId="demo-project-001" />);
     expect(screen.getByText("上传历史预案")).toBeInTheDocument();
+    expect(screen.getByText("持续学习")).toBeInTheDocument();
+    expect(screen.getByText(/每次上传、补充和重新生成都会沉淀为项目知识/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("资料上传"), {
       target: {
         files: [

@@ -25,11 +25,13 @@ describe("ProjectCreateForm", () => {
     expect(screen.getByLabelText("企业规模")).toBeInTheDocument();
     expect(screen.getByLabelText("环境风险等级")).toBeInTheDocument();
     expect(screen.getByLabelText("是否涉及危化品")).toBeInTheDocument();
-    expect(screen.getByLabelText("服务模式")).toBeInTheDocument();
-    expect(screen.getByText("标准版")).toBeInTheDocument();
-    expect(screen.getByText("专业版")).toBeInTheDocument();
-    expect(screen.getByText("环保应急预案")).toBeInTheDocument();
-    expect(screen.getByText("守住环境风险底线")).toBeInTheDocument();
+    expect(screen.queryByLabelText("服务模式")).not.toBeInTheDocument();
+    expect(screen.queryByText("标准版")).not.toBeInTheDocument();
+    expect(screen.queryByText("专业版")).not.toBeInTheDocument();
+    expect(screen.queryByText("套餐预留")).not.toBeInTheDocument();
+    expect(screen.getByText("环境应急预案智能编制")).toBeInTheDocument();
+    expect(screen.getByText("持续学习企业风险特征")).toBeInTheDocument();
+    expect(screen.getAllByText("形成项目知识库").length).toBeGreaterThan(0);
     expect(screen.getByText("基础信息")).toBeInTheDocument();
     expect(screen.getByText("风险与用途")).toBeInTheDocument();
   });
